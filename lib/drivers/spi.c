@@ -65,13 +65,14 @@ void spi_init(spi_device_num_t spi_num, spi_work_mode_t work_mode, spi_frame_for
     configASSERT(spi_num < SPI_DEVICE_MAX && spi_num != 2);
     spi_clk_init(spi_num);
 
-    uint8_t dfs_offset, frf_offset;
+    uint8_t dfs_offset, frf_offset, work_mode_offset;
     switch(spi_num)
     {
         case 0:
         case 1:
             dfs_offset = 16;
             frf_offset = 21;
+            work_mode_offset = 6;
             break;
         case 2:
             configASSERT(!"Spi Bus 2 Not Support!");
@@ -80,6 +81,7 @@ void spi_init(spi_device_num_t spi_num, spi_work_mode_t work_mode, spi_frame_for
         default:
             dfs_offset = 0;
             frf_offset = 22;
+            work_mode_offset = 8;
             break;
     }
 
@@ -106,7 +108,7 @@ void spi_init(spi_device_num_t spi_num, spi_work_mode_t work_mode, spi_frame_for
     spi_adapter->dmardlr = 0x00;
     spi_adapter->ser = 0x00;
     spi_adapter->ssienr = 0x00;
-    spi_adapter->ctrlr0 = (work_mode << 6) | (frame_format << frf_offset) | ((data_bit_length - 1) << dfs_offset);
+    spi_adapter->ctrlr0 = (work_mode << work_mode_offset) | (frame_format << frf_offset) | ((data_bit_length - 1) << dfs_offset);
     spi_adapter->spi_ctrlr0 = 0;
     spi_adapter->endian = endian;
 }
